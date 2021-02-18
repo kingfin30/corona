@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.corona.main.service.impl.LetterMapper">   
+    
+    <!-- 보내기함 삽임 -->
+   <insert id="inserts" parameterType="LSender" useGeneratedKeys="true" keyProperty="lsno">
+        <selectKey keyProperty="lsno" resultType="int" order="BEFORE">
+            SELECT SEQUENCE1.NEXTVAL FROM DUAL
+        </selectKey>
+              INSERT INTO LETTERSE(		 
+        							CONTENT
+        						,	WRITER 
+        						,	RECEIVER
+        						,	WRITERNO      				
+        						,	LSNO	)
+        			VALUES(			
+        							#{content}
+        						,	#{writer}
+        						,	#{receiver}
+        						,	#{writerno}        	
+        						,	#{lsno}		)
+
+        
+    </insert>  
+       <insert id="adminRflag" parameterType="AdminFlag" >
+      
+           
+        	 INSERT INTO ADMINRFLAG(
+              						ADMINID
+              					,   ANO
+              					,	LSNO		 
+        								)
+        								
+				SELECT 				#{adminId}
+									, #{ano}
+									, LAST_NUMBER -1
+									
+				FROM USER_SEQUENCES 
+				WHERE SEQUENCE_NAME ='SEQUENCE1'        								
+
+        
+    </insert> 
+      
+   <!-- 받기함 삽입 -->
+    <insert id="insertr" parameterType="LReceiver" useGeneratedKeys="true" keyProperty="lrno">
+        <selectKey keyProperty="lrno" resultType="int" order="BEFORE">
+            SELECT SEQUENCE2.NEXTVAL FROM DUAL
+        </selectKey>
+			  INSERT INTO LETTERRE(		 
+        							CONTENT
+        						,	WRITER  
+        						,	RECEIVER
+        						,	WRITERNO
+        						,	RECEIVERNO        						
+        						,	LRNO
+        						,	LSNO
+        							)
+        			SELECT		
+        							#{content}
+        						,	#{writer}
+        						,	#{receiver}
+        						,	#{writerno}
+        						,	#{receiverno}	        						
+        						,	#{lrno}
+        						,	LAST_NUMBER -1
+        						
+        			FROM		USER_SEQUENCES
+        			WHERE		SEQUENCE_NAME = 'SEQUENCE1'
+        
+    </insert>
+    
+    <!-- 보낸 쪽지함 -->
+       <select id="letterList" resultType="LSender" parameterType="SearchCriteria">
+          SELECT		CONTENT,
+          				WRITER,
+          				RECEIVER,
+          				LSNO,
+          				REGDATE,
+          				RFLAG,
+          				DFLAG,
+          				WRITERNO,
+          				RNUM		
+        		
+        FROM( 	
+        		SELECT		CONTENT,
+          					WRITER,
+          					RECEIVER,
+          					LSNO,
+          					REGDATE,
+          					RFLAG,
+          					WRITERNO,
+          					DFLAG,
+          					ROW_NUMBER() OVER(ORDER BY REGDATE DESC) AS RNUM		
+        		
+        		
+        		
+        		FROM LETTERSE
+        		WHERE WRITER = #{writer} AND DFLAG = 0
+        		
+        			<include refid="letterSearch"></include>
+        		)MP
+        WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+         
+        ORDER BY RNUM ASC
+    </select>
+    <select id="letterListCount" parameterType="SearchCriteria" resultType="int">
+        SELECT  COUNT(*)
+        FROM	LETTERSE 
+        WHERE WRITER = #{writer} AND DFLAG = 0
+        	<include refid="letterSearch"></include>
+        	AND LSNO > 0
+    </select>
+    
+    <select id="letterRead" resultType="LSender" parameterType="int"> 
+       
+        		SELECT		CONTENT,
+          					WRITER, 
+          					RECEIVER,
+          					LSNO,
+          					REGDATE,
+          					RFLAG,
+          					DFLAG,
+          					WRITERNO
+          						
+        		
+        		
+        		
+        		FROM LETTERSE
+        		 WHERE LSNO = #{lsno}
+        		
+        		
+       
+         
+   
+        
+    </select>
+    
+        <select id="receiveRead" resultType="LReceiver" parameterType="int">  
+       
+        		SELECT	CONTENT,
+          				WRITER, 
+          				RECEIVER,
+          				LRNO,
+          				LSNO,
+          				REGDATE,
+          				READDATE,
+          				RFLAG,
+          				DFLAG,
+          				WRITERNO,
+          				RECEIVERNO
+          						
+        		
+        		
+        		
+        		FROM LETTERRE
+        		WHERE LRNO = #{lrno}
+
+    </select>
+    
+    
+      <!-- 받은 쪽지함 -->
+       <select id="receiveList" resultType="LReceiver" parameterType="SearchCriteria">
+          SELECT		CONTENT,
+          				WRITER, 
+          				RECEIVER,
+          				LRNO,
+          				LSNO,
+          				REGDATE,
+          				READDATE,
+          				RFLAG,
+          				DFLAG,
+          				WRITERNO,
+          				RECEIVERNO,
+          				RNUM		
+        		
+        FROM( 	
+        		SELECT		CONTENT,
+          					WRITER,
+          					RECEIVER,
+          					LRNO,
+          					LSNO,
+          					REGDATE,
+          					READDATE,
+          					RFLAG,
+          					DFLAG,
+          					WRITERNO,
+          					RECEIVERNO,
+          					ROW_NUMBER() OVER(ORDER BY REGDATE DESC) AS RNUM		
+        		
+        		
+        		
+        		FROM LETTERRE
+        		WHERE RECEIVER = #{receiver} AND DFLAG = 0
+        		
+        			<include refid="letterSearch"></include>
+        		)MP
+        WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+         
+        ORDER BY RNUM ASC
+    </select>
+    
+    <select id="receiveListCount" parameterType="SearchCriteria" resultType="int">
+       SELECT  COUNT(*)
+        FROM	LETTERRE 
+        WHERE RECEIVER = #{receiver} AND DFLAG = 0
+        	<include refid="letterSearch"></include>
+        	AND LRNO > 0
+    </select>
+    
+      <!-- 검색 조건문 -->
+    <sql id="letterSearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+		</if>
+	</sql>
+	
+    <select id="rfList" parameterType="int" resultType="AdminFlag"> 
+        SELECT 			ADMINID,
+        				ANO,
+        				RFLAG,
+        				LSNO,
+        				READDATE
+        FROM(
+       		 SELECT	ADMINID,
+        				ANO,
+        				RFLAG,
+        				LSNO,
+        				READDATE,
+        				ROW_NUMBER() OVER(ORDER BY ANO ASC) AS RNUM
+       		 FROM	ADMINRFLAG
+        	WHERE   LSNO = #{lsno} 
+		)
+		WHERE 1=1
+         
+     
+    </select>
+    
+      <select id="rfListCount" parameterType="int" resultType="int">
+        SELECT	COUNT(*)
+        FROM	ADMINRFLAG
+        WHERE   LSNO = #{lsno} 
+
+    </select>
+    
+      <update id="read" parameterType="LReceiver">
+           UPDATE 	ADMINRFLAG 
+	    SET		RFLAG = 'Y', 
+	    		READDATE = SYSDATE 
+	    		
+	   	WHERE 	LSNO = #{lsno} 
+	   	AND		ANO	= #{receiverno}
+          
+      </update>
+      <select id="readChk" parameterType="LReceiver" resultType="AdminFlag">
+          SELECT	*
+          FROM 		ADMINRFLAG
+          WHERE		LSNO = #{lsno}
+          AND		ANO  = #{receiverno}		 
+      </select>
+      <select id="readCount" parameterType="int" resultType="int">
+          SELECT	COUNT(*)
+          FROM		ADMINRFLAG
+          WHERE		ANO = #{ano}
+          AND		RFLAG = 'N'
+          AND      DFLAG = 0
+          
+      </select>
+       <select id="sendReadCount" parameterType="int" resultType="int">
+          SELECT	COUNT(*)
+          FROM		ADMINRFLAG
+          WHERE		LSNO = #{lsno}
+          AND		RFLAG = 'N'
+          AND      DFLAG = 0
+          
+      </select>
+      <update id="sendDelete" parameterType="LSender">
+          UPDATE	LETTERSE
+          SET		DFLAG  = 1
+          WHERE		LSNO = #{lsno} 
+          
+      </update>
+      <update id="sFlagDelete" parameterType="LSender"> 
+          UPDATE	ADMINRFLAG
+          SET		DFLAG  = 1
+          WHERE		ANO = #{receiverno} 
+          AND		LSNO = #{lsno} 
+          
+      </update>
+      <update id="rFlagDelete" parameterType="LReceiver"> 
+          UPDATE	ADMINRFLAG
+          SET		DFLAG  = 1
+          WHERE		ANO = #{receiverno} 
+          AND		LSNO = #{lsno} 
+          
+      </update>
+      <update id="receiveDelete" parameterType="LReceiver">
+          UPDATE	LETTERRE
+          SET		DFLAG  = 1 
+          WHERE		LRNO   = #{lrno}
+         
+      
+          
+      </update>
+         
+    
+</mapper>

@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="egovframework.corona.main.service.impl.AdminloginMapper">
+      
+    <!-- 관리자 등록 -->
+    <insert id="adminSignUp" parameterType="SearchCriteria">
+        INSERT INTO ADMIN(
+        					ADMINID,
+        					ADMINNAME,
+        					ADMINPASSWORD,
+        					AMAIL,
+        					ACONTACT,
+        					RIGHT,
+        					
+        					ANO        )
+        VALUES	(			
+        					#{adminId},
+        					#{adminName},
+        					#{adminPassword},
+        					#{amail},
+        					#{acontact},
+        					#{right},
+        					
+        					ADMIN_SEQ.NEXTVAL
+        										)	
+        
+    </insert>
+    <!-- 관리자 데이터 불러오기(ano) -->
+     <select id="adminRead" parameterType="int" resultType="AdminloginVO">
+         SELECT ANO
+       			, ADMINNAME
+       			, ADMINID
+       			, ADMINPASSWORD
+       			, AMAIL
+       			, REGDATE
+        		, UPDATEDATE
+       			, ACONTACT
+       			, RIGHT
+       			, account
+       		
+       	FROM ADMIN
+       	WHERE ANO = #{ano}	
+       			
+   </select>
+   
+    <!-- 관리자 데이터 불러오기 (ID) -->
+   <select id="adminData" parameterType="String" resultType="AdminloginVO">
+         SELECT ANO
+       			, ADMINNAME
+       			, ADMINID
+       			, ADMINPASSWORD
+       			, AMAIL
+       			, REGDATE 
+        		, UPDATEDATE
+       			, ACONTACT
+       			, RIGHT
+       			, ACCOUNT
+       		
+       	FROM ADMIN
+       	WHERE ADMINID = #{adminId}	
+       			
+   </select>
+    
+    <!-- 관리자 목록 -->
+    <select id="adminList" resultType="AdminloginVO" parameterType="SearchCriteria">
+        SELECT	ANO
+        		, ADMINID
+        		, ADMINNAME
+        		, AMAIL
+        		, ACONTACT
+        		, REGDATE
+        		, UPDATEDATE
+        		, RIGHT
+        		, RNUM
+        		, account
+        		
+        FROM( 	
+        		SELECT	ANO
+        				, ADMINID
+        				, ADMINNAME
+        				, AMAIL
+        				, ACONTACT
+        				, REGDATE
+        				, UPDATEDATE
+        				, RIGHT
+        				, account 
+        				, ROW_NUMBER() OVER(ORDER BY REGDATE DESC) AS RNUM
+        		FROM ADMIN
+        		WHERE 1=1
+        		
+        			<include refid="adminSearch"></include>
+        		)MP
+        WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+        
+        ORDER BY RNUM ASC
+    </select>
+    <select id="adminList2" resultType="AdminloginVO" parameterType="SearchCriteria">
+         SELECT	ANO
+        		, ADMINID
+        		, ADMINNAME
+        		, AMAIL
+        		, ACONTACT
+        		, REGDATE
+        		, UPDATEDATE
+        		, RIGHT
+        		, ACCOUNT
+        		, RNUM
+        		
+        FROM( 	
+        		SELECT	ANO
+        				, ADMINID
+        				, ADMINNAME
+        				, AMAIL
+        				, ACONTACT
+        				, REGDATE
+        				, UPDATEDATE
+        				, RIGHT
+        				, account 
+        				, ROW_NUMBER() OVER(ORDER BY ADMINNAME) AS RNUM
+        		FROM ADMIN
+        		WHERE RIGHT = '일반관리자'
+        		
+        			<include refid="adminSearch"></include>
+        		)MP
+        WHERE 1=1
+        
+    </select>
+     <select id="adminList3" resultType="AdminloginVO" parameterType="SearchCriteria">
+         SELECT	ANO
+        		, ADMINID
+        		, ADMINNAME
+        		, AMAIL
+        		, ACONTACT
+        		, REGDATE
+        		, UPDATEDATE
+        		, RIGHT
+        		, ACCOUNT
+        		, RNUM
+        		
+        FROM( 	
+        		SELECT	ANO
+        				, ADMINID
+        				, ADMINNAME
+        				, AMAIL
+        				, ACONTACT
+        				, REGDATE
+        				, UPDATEDATE
+        				, RIGHT
+        				, account 
+        				, ROW_NUMBER() OVER(ORDER BY ADMINNAME) AS RNUM
+        		FROM ADMIN
+        		WHERE RIGHT = '최고관리자'
+        		
+        			<include refid="adminSearch"></include>
+        		)MP
+        WHERE 1=1
+        
+        
+    </select>
+    <select id="adminList4" resultType="AdminloginVO" parameterType="SearchCriteria">
+        SELECT	ANO
+        		, ADMINID
+        		, ADMINNAME
+        		, AMAIL
+        		, ACONTACT 
+        		, REGDATE
+        		, UPDATEDATE
+        		, RIGHT
+        		, ACCOUNT
+        		, RNUM
+        		
+        FROM( 	
+        		SELECT	ANO
+        				, ADMINID
+        				, ADMINNAME
+        				, AMAIL
+        				, ACONTACT
+        				, REGDATE
+        				, UPDATEDATE
+        				, RIGHT
+        				, account 
+        				, ROW_NUMBER() OVER(ORDER BY REGDATE DESC) AS RNUM
+        		FROM ADMIN
+        		WHERE 1=1
+        		
+        			<include refid="adminSearch"></include>
+        		)MP
+        WHERE 1=1
+        ORDER BY RNUM ASC
+    </select>
+    <select id="adminListCount" parameterType="SearchCriteria" resultType="int">
+        SELECT  COUNT(ANO)
+        FROM	ADMIN
+        WHERE 1=1
+        	<include refid="adminSearch"></include>
+        	AND ANO > 0
+    </select>
+    
+    <!-- 검색 조건문 -->
+    <sql id="adminSearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND ADMINID LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND ADMINNAME LIKE '%' || #{keyword} || '%'</if>
+		
+
+		</if>
+	</sql>
+	
+    <!-- 관리자 수정 -->
+	<update id="adminUpdate" parameterType="AdminloginVO" >
+	    UPDATE 	ADMIN
+	    SET		ADMINNAME = #{adminName},
+	    		AMAIL = #{amail},
+	    		ACONTACT = #{acontact},
+	    		UPDATEDATE = SYSDATE
+	   	WHERE ANO = #{ano}
+	    
+	</update>
+	
+	
+	<!-- 관리자 패스워드 수정 -->
+	<update id="adminPwUpdate" parameterType="AdminloginVO">
+	    UPDATE 	ADMIN
+	    SET		ADMINPASSWORD = #{adminPassword}
+	    		, UPDATEDATE = SYSDATE
+	    WHERE ANO = #{ano}
+	</update>
+	
+
+	<!-- 로그인 -->
+	<select id="login" resultType="_int" parameterType="AdminloginVO">
+      SELECT count(*)
+      FROM ADMIN
+      WHERE ADMINID = #{adminId}
+      AND ADMINPASSWORD = #{adminPassword}
+   </select>
+   	<!--카카오 로그인 -->
+	<select id="kakaoLogin" resultType="_int" parameterType="String">
+      SELECT count(*)
+      FROM ADMIN
+      WHERE account = #{account}
+      
+   </select>
+   
+	<select id="kakaoAccount" resultType="AdminloginVO" parameterType="String">
+      SELECT ADMINID
+      FROM ADMIN
+      WHERE account = #{account}
+      
+   </select>
+   <select id="kakaoCount" parameterType="String" resultType="int">
+       SELECT COUNT(account)
+       FROM	ADMIN
+       WHERE	ADMINID = #{adminId}
+   </select>
+    
+	<update id= "kakaoRegister" parameterType="AdminloginVO">
+	   UPDATE ADMIN
+	   SET  account = #{account} 
+	   WHERE ADMINID = #{adminId}
+      AND ADMINPASSWORD = #{adminPassword}
+	    
+	</update>
+	<update id="kakaoDelete" parameterType="String">
+	    UPDATE ADMIN
+	    SET ACCOUNT = NULL
+	    WHERE ADMINID = #{adminId}
+	</update>
+   
+   <!-- 관리자 수 -->
+	<select id="checkcheck" resultType="int" parameterType="AdminloginVO">
+	    SELECT COUNT(*)
+	    FROM ADMIN
+	    WHERE 1=1 AND ANO>0
+	    
+	</select>
+	
+	<!-- 관리자 삭제  -->
+	<delete id="adminDelete"  parameterType="int" >
+	    
+	  DELETE from admin
+                WHERE   
+                   right = '일반관리자' and ano =#{ano}
+         
+
+	    
+	</delete>
+
+	<!--  -->
+	<select id="confirmId" parameterType="String" resultType="int">
+	    SELECT 	COUNT(ADMINPASSWORD)
+	    FROM	ADMIN
+	    WHERE	ADMINID = #{adminId}	    
+	</select>
+	<select id="idChk" resultType="int">
+	    SELECT 	COUNT(*)
+	    FROM	ADMIN
+	    WHERE	ADMINID = #{adminId}	    
+	</select>
+	<select id="passChk" resultType="int">
+	    SELECT 	COUNT(*)
+	    FROM	ADMIN
+	    WHERE	ADMINID = #{adminId}	
+	      AND	ADMINPASSWORD = #{adminPassword}    
+	</select>
+	
+	<!--  -->
+	<select id="confirmRight" parameterType="AdminloginVO" resultType="int">
+	    SELECT 	COUNT(*)
+	    FROM	ADMIN
+	    WHERE	RIGHT = '일반관리자'
+	</select>
+	
+	<select id="anoCheck" parameterType="int" resultType="int">
+	    SELECT 	COUNT(*)
+	    FROM	ADMIN
+	    WHERE 	ANO = #{ano}
+	</select>
+	
+	
+ </mapper>

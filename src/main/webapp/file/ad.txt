@@ -1,0 +1,26 @@
+  
+       	  <script type="text/javascript">
+		$(document).ready(function(){
+			var formObj = $("form[name='makeForm']");
+			$("#make_btn").on("click", function(){
+				if(fn_valiChk()){
+					return false;
+				}
+				formObj.attr("action", "make.do");
+				formObj.attr("method", "post");
+				formObj.submit();
+			});
+			
+		})
+		function fn_valiChk(){
+			var regForm = $("form[name='makeForm'] .chk").length;
+			for(var i = 0; i<regForm; i++){
+				if($(".chk").eq(i).val() == "" || $(".chk").eq(i).val() == null){
+					alert($(".chk").eq(i).attr("title"));
+					return true;
+				}
+			}
+		}
+		
+
+	</script>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <typeAliases>
+		<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+		<typeAlias alias="searchVO" type="egovframework.example.sample.service.SampleDefaultVO"/>
+		<typeAlias alias="sampleVO" type="egovframework.example.sample.service.SampleVO"/>
+		<typeAlias alias="adminLoginVO" type="egovframework.corona.main.service.AdminloginVO"/>
+		<typeAlias alias="confirmVO" type="egovframework.corona.main.service.ConfirmVO"/>
+		<typeAlias alias="searchCriteria" type="egovframework.corona.main.service.SearchCriteria"/>
+		<typeAlias alias="subCriteria" type="egovframework.corona.main.service.SubCriteria"/>
+		<typeAlias alias="criteria" type="egovframework.corona.main.service.Criteria"/>
+		<typeAlias alias="pageMaker" type="egovframework.corona.main.service.PageMaker"/>
+		<typeAlias alias="confirmMapper" type="egovframework.corona.main.service.impl.ConfirmMapper"/>
+		<typeAlias alias="adminLoginMapper" type="egovframework.corona.main.service.impl.AdminloginMapper"/>
+		<typeAlias alias="days7" type="egovframework.corona.main.service.Days7"/>
+		<typeAlias alias="days30" type="egovframework.corona.main.service.Days30"/>
+		<typeAlias alias="mailVO" type="egovframework.corona.main.service.MailVO"/>
+		<typeAlias alias="mailMapper" type="egovframework.corona.main.service.impl.MailMapper"/>
+		<typeAlias alias="mContentVO" type="egovframework.corona.main.service.MContentVO"/>
+		<typeAlias alias="mContentLogVO" type="egovframework.corona.main.service.MContentLogVO"/>
+		<typeAlias alias="mContentMapper" type="egovframework.corona.main.service.impl.MContentMapper"/>
+		<typeAlias alias="letterMapper" type="egovframework.corona.main.service.impl.LetterMapper"/>
+		<typeAlias alias="lSender" type="egovframework.corona.main.service.LSender"/>
+		<typeAlias alias="lReceiver" type="egovframework.corona.main.service.LReceiver"/>
+		<typeAlias alias="adminFlag" type="egovframework.corona.main.service.AdminFlag"/>
+		
+    </typeAliases>
+</configuration> 

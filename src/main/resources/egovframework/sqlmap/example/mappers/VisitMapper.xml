@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="egovframework.corona.main.service.impl.VisitMapper">
+      <insert id="visit">
+          INSERT	INTO	VISIT	(V_DATE)
+          					VALUES	(SYSDATE)
+          
+      </insert>
+      <select id="visitCount" resultType="int">
+          SELECT	COUNT(*) AS count
+          FROM		VISIT  
+          
+      </select>
+      <select id="todayCount" resultType="int">
+          SELECT	COUNT(*) AS count
+          FROM		VISIT
+          WHERE		TO_DATE(V_DATE, 'YYYY-MM-DD') = TO_DATE(SYSDATE, 'YYYY-MM-DD')
+          
+      </select>
+      	
+ </mapper>

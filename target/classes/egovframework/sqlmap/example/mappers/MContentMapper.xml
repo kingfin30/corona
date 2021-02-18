@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.corona.main.service.impl.MContentMapper">
+    <!-- 게시판 생성 -->
+    <insert id="insert" parameterType="MContentVO" useGeneratedKeys="true" keyProperty="bno">
+        <selectKey keyProperty="mno" resultType="int" order="BEFORE">
+            SELECT SEQ_MCONTENT.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO MCONTENT(		 
+        							SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT
+        						,	PERIOD
+        						,	ANO
+        						, 	CONTENTBYTE
+        						
+        					
+        						,	MNO	)
+        			VALUES(			
+        							#{subject}
+        						,	#{content}
+        						,	#{writer}
+        						,	#{right} 
+        						,	#{period}
+        						,	#{ano}
+								,	#{contentbyte}
+								
+        						,	#{mno}		)
+        
+    </insert>
+    
+    <insert id="insert_log" parameterType="MContentLogVO">
+         <selectKey keyProperty="lno" resultType="int" order="BEFORE">
+            SELECT SEQ_MCONTENT_LOG.NEXTVAL FROM DUAL
+        </selectKey>
+   
+          
+        INSERT INTO MCONTENT_LOG(	
+        							SUBJECT,
+        							CONTENT,
+        							WRITER,
+        							RIGHT,
+        							UPDATER,
+        							UPDATERRIGHT,
+        							COMMENTX,
+        							CONTENTBYTE,
+        							ANO,        
+        							UPDATEANO,		
+        							WRITEDATE,		
+        							
+        							MNO,
+        							LNO 	
+        				        				) 
+        				  VALUES(
+        				  			#{subject},
+        				  			#{content},
+        				  			#{writer},
+        				  			#{right},
+        				  			#{updater},
+        				  			#{updaterright},
+        				  			#{commentx},
+        				  			#{contentbyte},
+        				  			#{ano},
+        				  			#{updateano},
+        				  			#{writedate},
+        				  			
+        				  			#{mno},
+        				  			#{lno}		
+        				  							)
+        
+    </insert>
+        <insert id="insert_log2" parameterType="MContentLogVO">
+         <selectKey keyProperty="lno" resultType="int" order="BEFORE">
+            SELECT SEQ_MCONTENT_LOG.NEXTVAL FROM DUAL
+        </selectKey>
+   
+           
+        INSERT INTO MCONTENT_LOG(	
+        							SUBJECT,
+        							CONTENT,
+        							WRITER,
+        							RIGHT,
+        							UPDATER,
+        							UPDATERRIGHT,
+        							COMMENTX,
+        							CONTENTBYTE,
+        							ANO,        
+        							UPDATEANO,		
+        							WRITEDATE,		
+        							UPDATELNO,
+        							MNO,
+        							LNO 	
+        				        				) 
+        				  VALUES(
+        				  			#{subject},
+        				  			#{content},
+        				  			#{writer},
+        				  			#{right},
+        				  			#{updater},
+        				  			#{updaterright},
+        				  			#{commentx},
+        				  			#{contentbyte},
+        				  			#{ano},
+        				  			#{updateano},
+        				  			#{writedate},
+        				  			#{updatelno},
+        				  			#{mno},
+        				  			#{lno}		
+        				  							)
+        
+    </insert>
+    
+
+    
+    <select id="mContentRead" parameterType="int" resultType="MContentVO">
+          SELECT						SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						, 	LNO
+        						, 	CONTENTBYTE
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						,	UPDATEDATE
+        						,	RNUM
+        		
+        FROM( 	
+        		SELECT				SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						,   LNO
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						, 	CONTENTBYTE
+        						,	UPDATEDATE       		
+        				
+        						, ROW_NUMBER() OVER(ORDER BY UPDATEDATE ASC) AS RNUM
+        		FROM MCONTENT
+        		WHERE 1=1
+        		)
+        WHERE MNO = #{mno}	
+       			
+   </select>
+   
+    
+   
+    
+   
+     <select id="mContentPeriodCount" resultType="int">
+         SELECT 					COUNT(*)
+       		
+       	FROM 						MCONTENT
+       	WHERE 						PERIOD = 'use'
+       			
+   </select>
+   
+    
+    
+   <select id="mContentData" parameterType="int" resultType="MContentVO">
+         SELECT						SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						,   LNO
+        						, 	CONTENTBYTE
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						,	UPDATEDATE
+        						,	RNUM
+        		
+        FROM( 	
+        		SELECT				SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						, 	LNO
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						, 	CONTENTBYTE
+        						,	UPDATEDATE       		
+        				
+        						, ROW_NUMBER() OVER(ORDER BY UPDATEDATE ASC) AS RNUM
+        		FROM MCONTENT
+        		WHERE 1=1
+        		)MP
+        WHERE RNUM = #{rnum}
+	
+   </select>
+      <select id="mContentDataCount" parameterType="int" resultType="int">
+         SELECT					COUNT(*)
+        		 
+        FROM( 	
+        		SELECT			ROW_NUMBER() OVER(ORDER BY UPDATEDATE ASC) AS RNUM
+        		FROM MCONTENT
+        		WHERE 1=1
+        		)
+        WHERE RNUM = #{rnum}
+	
+   </select>
+   
+   <select id="mContentPeriod" resultType="MContentVO">
+     SELECT 						SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						,   LNO
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						, 	CONTENTBYTE
+        						,	UPDATEDATE
+       		
+       	FROM 						MCONTENT
+       	WHERE 						PERIOD = 'use'
+   </select>
+    <select id="mContentList" resultType="MContentVO" parameterType="SearchCriteria">
+          SELECT					SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						,   LNO
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						,   REGDATE
+        						, 	CONTENTBYTE
+        						,	UPDATEDATE        		
+        						, 	RNUM
+        						,   RNUM2
+        		
+        FROM( 	
+        		SELECT				SUBJECT
+        						,	CONTENT
+        						,	WRITER
+        						,	RIGHT 
+        						,	PERIOD
+        						,	MNO
+        						,	ANO
+        						, 	LNO
+        						, 	UPDATER
+        						,   UPDATERRIGHT
+        						,	UPDATEANO
+        						, 	CONTENTBYTE
+        						,   REGDATE
+        						,	UPDATEDATE      		
+        				
+        						, ROW_NUMBER() OVER(ORDER BY UPDATEDATE DESC) AS RNUM
+        						, ROW_NUMBER() OVER(ORDER BY UPDATEDATE ASC) AS RNUM2
+        		FROM MCONTENT
+        		WHERE 1=1
+        		
+        			<include refid="mContentSearch"></include>
+        		)MP
+        WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+        
+        ORDER BY RNUM ASC
+    </select>
+    
+     <select id="mContentLogList" resultType="MContentLogVO" parameterType="SubCriteria">  
+          SELECT	MNO
+        		, SUBJECT 
+        		, CONTENT
+        		, WRITER
+        		, LNO        	
+        		, RIGHT
+        		, ANO
+        		, UPDATER
+        		, UPDATERRIGHT
+        		, UPDATELNO
+        		, UPDATEANO
+        		, COMMENTX
+        		, 	CONTENTBYTE
+        	
+        		, UPDATEDATE        
+        		, WRITEDATE		
+        		, RNUM
+        
+        		
+        FROM( 	
+        		SELECT		MNO
+        				, SUBJECT 
+        				, CONTENT
+        				, WRITER
+        				, LNO        	
+        				, RIGHT
+        				, ANO
+        				, UPDATER
+        				, UPDATERRIGHT
+        				, UPDATELNO
+        				, UPDATEANO
+        				, COMMENTX
+        				, WRITEDATE
+        				, UPDATEDATE  
+        				, 	CONTENTBYTE       		
+        				
+        				, ROW_NUMBER() OVER(ORDER BY UPDATEDATE DESC) AS RNUM
+        		FROM MCONTENT_LOG
+        		WHERE MNO = #{mno}
+        		
+        		)MP
+        WHERE  RNUM BETWEEN #{rowStart} AND #{rowEnd}
+        
+        ORDER BY RNUM ASC
+    </select>
+   <select id="mContentLogRead" resultType="MContentLogVO">  
+          SELECT	MNO
+        		, SUBJECT 
+        		, CONTENT
+        		, WRITER
+        		, LNO        	
+        		, RIGHT
+        		, ANO
+        		, UPDATER
+        		, UPDATERRIGHT
+        		, UPDATELNO
+        		, UPDATEANO
+        		, COMMENTX
+        		, WRITEDATE
+        		, UPDATEDATE          		
+        		, RNUM
+        		, 	CONTENTBYTE
+        	
+        		
+        FROM( 	
+        		SELECT		MNO
+        				, SUBJECT 
+        				, CONTENT
+        				, WRITER
+        				, LNO        	
+        				, RIGHT
+        				, UPDATER
+        				, UPDATERRIGHT
+        				, UPDATEANO
+        				, UPDATELNO
+        				, COMMENTX
+        				, ANO
+        				, WRITEDATE
+        				, UPDATEDATE          		
+        				, 	CONTENTBYTE
+        				, ROW_NUMBER() OVER(ORDER BY UPDATEDATE DESC) AS RNUM
+        		FROM MCONTENT_LOG
+        		WHERE 1=1
+        		
+        		)MP
+        WHERE  LNO = #{lno}
+       
+    </select>
+    <select id="mContentLogListCount" parameterType="int" resultType="int">
+        SELECT  COUNT(*)
+        FROM	MCONTENT_LOG 
+        WHERE MNO = #{mno}
+        
+        	AND MNO > 0
+    </select>
+    
+    <select id="mContentListCount" parameterType="SearchCriteria" resultType="int">
+        SELECT  COUNT(MNO)
+        FROM	MCONTENT 
+        WHERE 1=1
+        	<include refid="mContentSearch"></include>
+        	AND MNO > 0
+    </select>
+    
+    <!-- 검색 조건문 -->
+    <sql id="mContentSearch">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND SUBJECT LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND WRITER LIKE '%' || #{keyword} || '%'</if>
+		</if>
+	</sql>
+	
+       <!-- 컨텐츠 수정 -->
+	<update id="mContentUpdate" parameterType="mContentVO" >
+	    UPDATE 	MCONTENT 
+	    SET		SUBJECT = #{subject},
+	    		CONTENT = #{content},
+	    		PERIOD = #{period},
+	    		LNO		= 0,
+	    		UPDATER = #{updater},
+	    		CONTENTBYTE = #{contentbyte},
+	    		UPDATERRIGHT = #{updaterright},
+	    		UPDATEANO	= #{updateano},
+	    		UPDATEDATE = SYSDATE
+	    		
+	   	WHERE MNO = #{mno}
+	    
+	</update>
+	<select id="updateCount" parameterType="int" resultType="int">
+	    SELECT 	COUNT(UPDATER)
+	    FROM	MCONTENT
+	    WHERE MNO = #{mno}
+	</select>
+	
+	<!-- 컨텐츠 삭제  -->
+	<delete id="mContentDelete"  parameterType="int" >
+	    
+	  DELETE from mContent
+                WHERE   
+                   mno= #{mno}
+          
+
+	    
+	</delete>
+	
+		<delete id="mContentDelete_log"  parameterType="int" >
+	    
+	  DELETE from mContent_log
+                WHERE   
+                   mno= #{mno}
+         
+
+	    
+	</delete>
+	
+	<update id="mContentReset" parameterType="mContentVO">
+	    UPDATE 	MCONTENT 
+	    SET		SUBJECT = #{subject},
+	    		CONTENT = #{content},
+	    		LNO		= #{lno},
+	    		UPDATER = #{updater},
+	  
+	    		UPDATERRIGHT = #{updaterright},
+	    		UPDATEANO	= #{updateano},
+	    		CONTENTBYTE = #{contentbyte},
+	    		UPDATEDATE = SYSDATE
+	   	WHERE MNO = #{mno}
+	</update>
+
+
+
+    
+    
+</mapper>

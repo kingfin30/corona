@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.corona.main.service.impl.MailMapper">
+    
+    <!-- 구독자 등록 -->
+   <insert id="insertMail">
+       INSERT INTO CMAIL(	
+       								CNAME
+       								, MAILADDRESS
+       								, CBIRTH	
+       								, CMNO)
+       					VALUES(		
+       								#{cname}
+       								, #{mailaddress}
+       								, #{cbirth}
+       								, MAIL_SEQ.NEXTVAL	)
+       								
+   </insert>
+   
+   <!-- 구독자 목록 -->
+   <select id="subList" resultType="MailVO" parameterType="SearchCriteria">
+       SELECT	CMNO
+       			, CNAME
+       			, CBIRTH
+       			, MAILADDRESS
+       			, REGDATE
+       			, RNUM
+       	FROM(
+       			SELECT 	CMNO
+       					, CNAME
+       					, CBIRTH
+       					, MAILADDRESS
+       					, REGDATE
+       					, ROW_NUMBER() OVER(ORDER BY REGDATE DESC) AS RNUM
+       			FROM	CMAIL
+       			WHERE	1=1
+       				<include refid="subSearch"></include>
+       			)MP
+       	WHERE	RNUM	BETWEEN	#{rowStart} AND #{rowEnd}
+       	
+       	ORDER BY RNUM ASC
+   </select>
+   
+   <!-- 구독자 목록 페이징 -->
+   <select id="subListCount" parameterType="SearchCriteria" resultType="int">
+       SELECT	COUNT(CMNO)
+       FROM		CMAIL
+       WHERE	1=1
+       		<include refid="subSearch"></include>
+       		AND	CMNO > 0	
+   </select>
+   
+   <!-- 구독자 검색 조건문 -->
+   <sql id="subSearch">
+       	<if test="searchType == 't'.toString()">AND CNAME LIKE '%' || #{keyword} || '%'</if>
+		<if test="searchType == 'c'.toString()">AND CBIRTH LIKE '%' || #{keyword} || '%'</if> 
+		<if test="searchType == 'p'.toString()">AND MAILADDRESS LIKE '%' || #{keyword} || '%'</if>
+   </sql>
+   
+   <!-- 구독자 삭제 -->
+   <delete id="subDelete" parameterType="int">
+       DELETE FROM CMAIL
+       			WHERE	CMNO = #{cmno}
+       
+   </delete>
+   
+   <!-- 구독자 불러오기 -->
+   <select id="subRead" parameterType="int" resultType="MailVO">
+        SELECT	CMNO
+       			, CNAME
+       			, CBIRTH
+       			, MAILADDRESS
+       			, REGDATE
+       	FROM	CMAIL
+       	WHERE	CMNO = #{cmno}
+   </select>
+   
+   <!-- 메일 체크 -->
+   <select id="checkMail" parameterType="String" resultType="int">
+       SELECT	COUNT(*)
+       FROM		CMAIL
+       WHERE	MAILADDRESS = #{mailaddress}
+   </select>
+
+       
+    
+</mapper>

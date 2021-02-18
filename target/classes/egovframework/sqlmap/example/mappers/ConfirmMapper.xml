@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="egovframework.corona.main.service.impl.ConfirmMapper">
+
+   <!-- 확진자 등록 -->
+   <insert id="write">
+       INSERT INTO TB2_CONFIRMER(	
+       								NAME
+       								, STATE
+       								, ADDRESS_NO
+       								, ADDRESS
+       								, ADDRESS_DETAIL
+       								, ADDRESS_EXTRA
+       								, BIRTH
+       								, GENDER
+       								, LOCAL
+       								, SORTNO
+       								, PHONE
+       								, REGION
+       								, CELLOS
+       								, CNO
+       												)
+       					VALUES(		
+       								#{name}
+       								, #{state}
+       								, #{address_no}
+       								, #{address}
+       								, #{address_detail}
+       								, #{address_extra}
+       								, #{birth}
+       								, #{gender}
+       								, #{local} 
+       								, #{sortno}         						    
+       								, #{phone}
+       								, #{region}
+       								, #{cellOs}								      								
+       								, TB2_CONFIRMER_SEQ.NEXTVAL	)
+       								
+   </insert>
+   
+    <!-- 확진자 목록 -->
+   <select id="list" resultType="ConfirmVO" parameterType="SearchCriteria">
+       SELECT 	CNO
+       			, NAME
+       			, STATE
+       			, AGE
+       			, ADDRESS_NO
+       			, ADDRESS
+       			, ADDRESS_DETAIL
+       			, ADDRESS_EXTRA
+       			, BIRTH
+       			, GENDER
+       			, LOCAL
+       			, SORTNO
+       			, PHONE
+       			, CELLOS
+       			, REGION
+       			, RNUM
+       			, CONFIRM_DATE
+       			, UPDATE_DATE
+       				
+       	FROM (
+       			SELECT 	CNO
+       					, NAME
+       					, STATE
+       					, ADDRESS_NO
+       					, ADDRESS
+       					, ADDRESS_DETAIL
+       					, ADDRESS_EXTRA
+       					, BIRTH
+       					, GENDER
+       					, LOCAL
+       					, REGION
+       					, SORTNO
+       					, PHONE
+       					, CELLOS
+       					, CONFIRM_DATE
+       					, UPDATE_DATE
+       					, TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE( tb2_confirmer.birth ,'YYYYMMDD')) / 12) AS AGE
+       					, ROW_NUMBER()	OVER(ORDER BY CNO DESC) AS RNUM
+       			FROM TB2_CONFIRMER
+       			WHERE 1=1
+       				<include refid="search"></include>
+       			) MP
+       	WHERE RNUM BETWEEN #{rowStart} AND #{rowEnd}
+       	       			
+       	ORDER BY RNUM ASC
+       			
+   </select>
+   <!-- 확진자 페이징  -->
+	<select id="listCount" parameterType="SearchCriteria" resultType="int">
+		SELECT COUNT(CNO)
+		   FROM TB2_CONFIRMER
+		   WHERE 1=1
+		<include refid="search"></include>	
+		   AND CNO > 0
+	</select>
+	
+	<!-- 검색 조건 -->
+	<sql id="search">
+		<if test="searchType != null">
+			<if test="searchType == 't'.toString()">AND NAME LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'c'.toString()">AND REGION LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'w'.toString()">AND STATE LIKE '%' || #{keyword} || '%'</if>
+			<if test="searchType == 'cd'.toString()">AND GENDER LIKE '%' || #{keyword} || '%'</if>
+	
+		</if>
+	</sql>
+	 <!--  SELECT CNO
+       			, NAME
+       			, STATE
+       			, ADDRESS_NO
+       			, ADDRESS
+       			, ADDRESS_DETAIL
+       			, ADDRESS_EXTRA
+       			, BIRTH
+       			, GENDER
+       			, LOCAL
+       			, CELLOS
+       			, CONFIRM_DATE
+       			, UPDATE_DATE
+       	FROM TB2_CONFIRMER
+       	WHERE CNO = #{cno}	
+       		 --> 
+	<!-- 확진자 불러오기(cno) -->
+   <select id="read" parameterType="int" resultType="ConfirmVO">
+      
+       		 SELECT 	CNO
+       			, NAME
+       			, BIRTHINFO
+       			, STATE
+       			, AGE
+       			, ADDRESS_NO
+       			, ADDRESS
+       			, ADDRESS_DETAIL
+       			, ADDRESS_EXTRA
+       			, BIRTH
+       			, GENDER
+       			, LOCAL
+       			, SORTNO
+       			, PHONE
+       			, CELLOS
+       			, REGION
+       			, RNUM
+       			, CONFIRM_DATE
+       			, UPDATE_DATE
+       			
+       				
+       	FROM (
+       			SELECT 	CNO
+       					, NAME
+       					, STATE
+       					, ADDRESS_NO
+       					, ADDRESS
+       					, ADDRESS_DETAIL
+       					, ADDRESS_EXTRA
+       					, BIRTH
+       					, GENDER
+       					, LOCAL
+       					, REGION
+       					, SORTNO
+       					, PHONE
+       					, CELLOS
+       					, CONFIRM_DATE
+       					, UPDATE_DATE
+       					, SUBSTR(BIRTH, 3,6) AS BIRTHINFO
+       					, TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE( tb2_confirmer.birth ,'YYYYMMDD')) / 12) AS AGE
+       					, ROW_NUMBER()	OVER(ORDER BY CNO ASC) AS RNUM
+       			FROM TB2_CONFIRMER
+       			WHERE 1=1
+       			
+       			) MP
+       	WHERE CNO = #{cno}
+ 
+   </select>
+     <select id="data" resultType="int" parameterType="ConfirmVO">
+       SELECT 	CNO
+       			, NAME
+       			, STATE
+       			, BIRTHINFO
+       			, ADDRESS_NO
+       			, ADDRESS
+       			, ADDRESS_DETAIL
+       			, ADDRESS_EXTRA
+       			, BIRTH
+       			, GENDER
+       			, LOCAL
+       			, SORTNO
+       			, PHONE
+       			, CELLOS
+       			, REGION
+       			, RNUM
+       			, AGE
+       			
+       			, CONFIRM_DATE
+       			, UPDATE_DATE
+       				
+       	FROM (
+       			SELECT 	CNO
+       					, NAME
+       					, STATE
+       					, ADDRESS_NO
+       					, ADDRESS
+       					, ADDRESS_DETAIL
+       					, ADDRESS_EXTRA
+       					, BIRTH
+       					, GENDER
+       					, LOCAL
+       					, REGION
+       					, SORTNO
+       					, PHONE
+       					, CELLOS
+       					, CONFIRM_DATE
+       					, UPDATE_DATE
+       					, SUBSTR(BIRTH, 3,6) AS BIRTHINFO
+       					, TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), TO_DATE( tb2_confirmer.birth ,'YYYYMMDD')) / 12) AS AGE
+       					, ROW_NUMBER()	OVER(ORDER BY CONFIRM_DATE DESC) AS RNUM
+       			FROM TB2_CONFIRMER
+       			WHERE 1=1
+       				
+       			) MP
+       	WHERE RNUM =#{rnum}
+      
+       			
+   </select>
+   
+   <!-- 확진자 기본정보 수정 -->
+   <update id="update" parameterType="ConfirmVO">
+       UPDATE TB2_CONFIRMER
+       		SET NAME = #{name}
+       			, ADDRESS_NO = #{address_no}
+       			, ADDRESS = #{address}
+       			, ADDRESS_DETAIL = #{address_detail}
+       			, ADDRESS_EXTRA = #{address_extra}
+       			, BIRTH = #{birth}
+       			, REGION = #{region}
+       			, LOCAL = #{local}
+       			, GENDER = #{gender}
+       			, SORTNO = #{sortno}
+       			, PHONE = #{phone}
+       			
+       	WHERE	CNO = #{cno}   		    
+   </update>
+   
+   <!-- 확진자 상태수정(해제) -->
+   <update id="updateRelease" parameterType="int">
+       UPDATE TB2_CONFIRMER
+       		SET	STATE = '해제',
+       			UPDATE_DATE = SYSDATE
+       		WHERE	CNO = #{cno}	
+   </update>
+   
+   <!-- 확진자 상태수정(사망) -->
+   <update id="updateDead" parameterType="int">
+       UPDATE TB2_CONFIRMER
+       		SET	STATE = '사망',
+       			UPDATE_DATE = SYSDATE
+       		WHERE	CNO = #{cno}	
+   </update>
+   
+   <!-- 확진자 상태 초기화 -->
+   <update id="updateReset" parameterType="int">
+       UPDATE TB2_CONFIRMER
+       		SET STATE = '확진',
+       			UPDATE_DATE = CONFIRM_DATE
+       			WHERE	CNO = #{cno}
+   </update>
+   
+   
+  <!-- 상태별 확진자 수 -->
+   	<select id="selectConfirms" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+   	</select>
+   	 	
+   	 <select id="selectReleases" resultType="int" parameterType="ConfirmVO">
+   	 	SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='해제' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+   	    
+   	</select>
+   	
+   	<select id="selectDeads" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='사망' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+   	</select>
+   	
+   	
+   	
+   	
+   	
+   	   	   	 
+   	 
+   	 <!--  -->
+   	
+   	 <select id="selectSumReleases" resultType="int" parameterType="ConfirmVO">
+   	 	SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='해제' 
+   	    
+   	</select>
+
+   	<select id="selectSumDeads" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='사망' 
+   	</select>
+   	<select id="selectSumConfirms" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' 
+   	</select>
+   	<select id="selectDay_0" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(CONFIRM_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+   	</select>
+   		<select id="selectDay_1" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(CONFIRM_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+   	</select>
+   		<select id="selectDay_2" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(CONFIRM_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-2, 'YYYYMMDD')
+   	</select>
+   		<select id="selectDay_3" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(CONFIRM_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-3, 'YYYYMMDD')
+   	</select>
+   		<select id="selectDay_4" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(CONFIRM_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-4, 'YYYYMMDD')
+   	</select>
+   		<select id="selectDay_5" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-5, 'YYYYMMDD')
+   	</select>
+   	<select id="selectDay_6" resultType="int" parameterType="ConfirmVO">
+   	    SELECT COUNT(*)
+   	    FROM TB2_CONFIRMER
+   	    WHERE STATE='확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-6, 'YYYYMMDD')
+   	</select>
+   	
+   	   	<select id="select_0" resultType="int" parameterType="String">
+   	    SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+   	</select>
+   		<select id="select_1" resultType="int" parameterType="ConfirmVO">
+   	    SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-1, 'YYYYMMDD')
+   	</select>
+   		<select id="select_2" resultType="int" parameterType="ConfirmVO">
+   	  SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-2, 'YYYYMMDD')
+   	</select>
+   		<select id="select_3" resultType="int" parameterType="ConfirmVO">
+SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-3, 'YYYYMMDD')
+   	</select>
+   		<select id="select_4" resultType="int" parameterType="ConfirmVO">
+   	    SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-4, 'YYYYMMDD')
+   	</select>
+   		<select id="select_5" resultType="int" parameterType="ConfirmVO">
+   	 SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-5, 'YYYYMMDD')
+   	</select>
+   	<select id="select_6" resultType="int" parameterType="ConfirmVO">
+   	  SELECT 
+   	    COUNT(*)
+   	    FROM TB2_CONFIRMER 
+   	    WHERE STATE=#{state} AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE-6, 'YYYYMMDD')
+   	</select>
+
+   	<select id="Day0"  resultType="Date">
+   	    SELECT 
+   	    D0
+   	    FROM DATET 
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day1"  resultType="Date">
+   	    SELECT D1
+   	    FROM DATET
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day2"  resultType="Date">
+   	    SELECT D2
+   	    FROM DATET 
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day3" resultType="Date" >
+   	    SELECT D3
+   	    FROM DATET
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day4"  resultType="Date">
+   	    SELECT D4
+   	    FROM DATET 
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day5" resultType="Date" >
+   	    SELECT D5
+   	    FROM DATET
+   	    WHERE dno=1
+   	       	    
+   	</select>
+   	<select id="Day6" resultType="Date">
+   	    SELECT D6
+   	    FROM DATET
+   	    WHERE dno=1
+	</select>
+   	
+   	
+   	
+   	<update id="updateDays" parameterType="Days7">
+   	    UPDATE DATET
+   	    SET D0 = SYSDATE,
+   	    	D1 = SYSDATE-1,
+   	    	D2 = SYSDATE-2,
+   	    	D3 = SYSDATE-3,
+   	    	D4 = SYSDATE-4,
+   	    	D5 = SYSDATE-5,
+   	    	D6 = SYSDATE-6
+   	    
+   	    WHERE	DNO=1
+   	    	
+   	</update>
+   	
+
+     <select id="REGacc" parameterType="String" resultType="int"> 
+        SELECT 
+        COUNT(*)
+       	FROM TB2_CONFIRMER 
+       	WHERE REGION = #{region}
+        
+    </select>
+    <!-- 남녀 비율 조회 -->
+    <select id="gender" parameterType="String" resultType="int">
+    SELECT 
+    COUNT(*)
+    FROM TB2_CONFIRMER 
+    WHERE GENDER = #{gender}
+     AND STATE = '확진'
+    </select>
+    <!-- 내.외국 비율 조회 -->
+     <select id="local" parameterType="String" resultType="int">
+    SELECT 
+    COUNT(*)
+    FROM TB2_CONFIRMER 
+    WHERE LOCAL = #{local}
+     AND STATE = '확진'
+    </select>
+    
+       <!--당일 남녀 비율 조회 -->
+    <select id="gender_to" parameterType="String" resultType="int">
+    SELECT COUNT(*)
+    FROM TB2_CONFIRMER
+    WHERE GENDER = #{gender}
+    AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+     AND STATE = '확진'
+    </select>
+    
+    <!-- 당일 내.외국 비율 조회 -->
+     <select id="local_to" parameterType="String" resultType="int">
+    SELECT 
+    COUNT(*)
+    FROM TB2_CONFIRMER 
+    WHERE LOCAL = #{local} 
+    AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')
+    AND STATE = '확진'
+    </select> 
+    
+           <!--누적 남녀 비율 조회 -->
+    <select id="gender_sum" parameterType="String" resultType="int">
+    SELECT 
+    COUNT(*)
+    FROM TB2_CONFIRMER 
+    WHERE GENDER = #{gender}
+  
+    </select>
+    <!-- 누적 내.외국 비율 조회 -->
+     <select id="local_sum" parameterType="String" resultType="int">
+    SELECT 
+    COUNT(*)
+    FROM TB2_CONFIRMER 
+    WHERE LOCAL = #{local} 
+
+    </select> 
+    
+    <!-- 지역별 확진자 조회 -->	
+    <select id="REGchk" parameterType="String" resultType="int">
+        SELECT 
+        COUNT(*)
+       	FROM TB2_CONFIRMER 
+       	WHERE STATE = '확진' AND REGION = #{region}
+        
+    </select>
+       	  <select id="SELchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '서울' AND STATE = '확진' 	      			
+   	</select>
+   	<select id="PUSchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '부산' AND STATE = '확진' 		       			
+   	</select>
+   	<select id="INCchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '인천'  AND STATE = '확진' 			       			
+   	</select>
+   	<select id="KWJchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '광주'   AND STATE = '확진' 	       			
+   	</select>
+   	<select id="TAJchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '대전'  AND STATE = '확진' 		       			
+   	</select>
+   	<select id="USNchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '울산'  AND STATE = '확진' 			       			
+   	</select>
+   	<select id="KYGchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	 WHERE REGION = '경기'  AND STATE = '확진' 			       			
+   	</select>
+   	<select id="KAWchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '강원'  AND STATE = '확진' 				       			
+   	</select>
+   	<select id="CCBchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '충북'  AND STATE = '확진' 			   
+    </select>    	
+    <select id="CCNchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '충남'  AND STATE = '확진' 			   
+    </select> 
+    <select id="CLBchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '전북'  AND STATE = '확진' 			   
+    </select> 
+    <select id="CLNchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '전남'  AND STATE = '확진' 			   
+    </select> 
+    <select id="KSBchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '경북'  AND STATE = '확진' 			   
+    </select> 
+    <select id="KSNchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '경남'  AND STATE = '확진' 		   
+    </select> 
+    <select id="CHJchk" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '제주'  AND STATE = '확진' 		   
+    </select> 	
+    
+    
+    
+      <!-- 지역별 당일 확진자 조회 -->
+      <select id="REGtoday" parameterType="String" resultType="int">
+          SELECT 
+          COUNT(*)
+       	FROM TB2_CONFIRMER 
+       	WHERE  STATE = '확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD') AND REGION = #{region} 
+          
+      </select>	
+       	  <select id="SELtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '서울' AND STATE = '확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD') 	      			
+   	</select>
+   	<select id="PUStoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '부산' AND STATE = '확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		       			
+   	</select>
+   	<select id="INCtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '인천'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		       			
+   	</select>
+   	<select id="KWJtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '광주'  AND STATE = '확진' 	 AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')      			
+   	</select>
+   	<select id="TAJtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '대전'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')	       			
+   	</select>
+   	<select id="USNtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '울산'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		       			
+   	</select>
+   	<select id="KYGtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	 WHERE REGION = '경기'  AND STATE = '확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')			       			
+   	</select>
+   	<select id="KAWtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '강원'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')			       			
+   	</select>
+   	<select id="CCBtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '충북'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		   
+    </select>    	
+    <select id="CCNtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '충남'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		   
+    </select> 
+    <select id="CLBtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '전북'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		   
+    </select> 
+    <select id="CLNtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '전남'  AND STATE = '확진' AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')			   
+    </select> 
+    <select id="KSBtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '경북'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')		   
+    </select> 
+    <select id="KSNtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '경남'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')	   
+    </select> 
+    <select id="CHJtoday" resultType="int" >
+         SELECT COUNT(*)
+       	FROM TB2_CONFIRMER
+       	WHERE REGION = '제주'  AND STATE = '확진' 	AND TO_CHAR(UPDATE_DATE,'YYYYMMDD') = TO_CHAR(SYSDATE, 'YYYYMMDD')	   
+    </select> 	
+ 
+   	
+
+   
+   
+ 
+   
+</mapper>
