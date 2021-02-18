@@ -190,6 +190,8 @@
                                     	<option value="20" <c:if test="${scri.perPageNum == '20'}" > selected </c:if> >20개 보기</option>
                                     	<option value="50" <c:if test="${scri.perPageNum == '50'}" > selected </c:if> >50개 보기</option>
                                     	<option value="100" <c:if test="${scri.perPageNum == '100'}" > selected </c:if> >100개 보기</option>
+                                    	<option value="500" <c:if test="${scri.perPageNum == '500'}" > selected </c:if> >500개 보기</option>
+                                    	<option value="1000" <c:if test="${scri.perPageNum == '1000'}" > selected </c:if> >1000개 보기</option>
                                     </select>
                                 		
                                     
@@ -224,7 +226,7 @@
                                             	<th width="50px" style="text-align: center"><input type="checkbox" name="checkall" onchange="check(this.form.chk)"/></th>
                                             	<th  width="100px">번호</th>
                                                 <th>이름</th>
-                                                <th>생년월일</th>
+                                                <th width="150px">생년월일</th>
                                                
                                                 <th width="150px">나이(만)</th>
                                                 <th width="100px">성별</th>
@@ -252,7 +254,7 @@
 								
 								<td>&nbsp;&nbsp;<a href = "read.do?cno=${list.cno}&page=${scri.page}&perPageNum=${scri.perPageNum}&searchType=${scri.searchType}&keyword=${scri.keyword}"><B> <c:out value="${list.name}" /></B></a></td>
 								
-								<td>${asapro:maskingBirthRight4(list.birth)}</td> 
+								<td style="text-align: center">${asapro:maskingBirthRight4(list.birth)}</td> 
 								
 								<td style="text-align: center"><c:out value="${list.age}" /> 세</td>
 								<td style="text-align:center">
@@ -323,7 +325,7 @@
                                         </tbody>
                                         <tfoot style="background-color:#F2F2F2" >
                                         
-                                        <td colspan="10"> 
+                                        <td colspan="11"> 
                                        
                                         	  <div style="float: right;">
                                         	  상태변경 : &nbsp;

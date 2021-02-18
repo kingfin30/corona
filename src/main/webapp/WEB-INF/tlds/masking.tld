@@ -8,7 +8,7 @@
 	<jsp-version>2.0</jsp-version>
 	<short-name>asapro</short-name>
 	
-		<function>
+	<function>
 		<description>생년월일 뒷 4자리를 마스킹 처리한다.</description>
 		<name>maskingBirthRight4</name>
 		<function-class>
@@ -16,6 +16,19 @@
 		</function-class>
 		<function-signature>
 			java.lang.String maskingBirthRight4(java.lang.String)
+		</function-signature>
+	</function>
+	
+	
+	
+	<function>
+		<description>30자가 넘어가는 문자열을 ...처리한다.</description>
+		<name>longWordCutter30</name>
+		<function-class>
+			egovframework.corona.main.util.Functions
+		</function-class>
+		<function-signature>
+			java.lang.String longWordCutter30(java.lang.String)
 		</function-signature>
 	</function>
 	

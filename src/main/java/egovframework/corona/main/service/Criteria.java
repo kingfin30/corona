@@ -19,7 +19,7 @@ public class Criteria {
 	}
 	
 	public void setPerPageNum(int perPageNum) {
-		if (perPageNum <= 0 || perPageNum > 100) {
+		if (perPageNum <= 0 || perPageNum > 1000) {
 			this.perPageNum = 20;
 			return;
 		}

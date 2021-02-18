@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="asapro" uri="http://www.asadal.com" %>
 <%
  
     request.setCharacterEncoding("UTF-8");
@@ -302,19 +303,7 @@
 							
 								<td>
 									<button class="linkbtn" style="color:black" onclick="winOpen(this)" title="${letterList.content}" value="/sendRead.do?lsno=${letterList.lsno}" name="letterRead" id="letterRead">
-									<c:choose>
-										<c:when test="${fn:length(letterList.content) >70 }">
-										
- 											<c:out value="${fn:substring(letterList.content,0,69)}" />....
- 										
-										</c:when>
-										<c:otherwise>
-											
- 											 <c:out value="${letterList.content}" />
- 											
-										
-										</c:otherwise>
-									</c:choose>
+								${asapro:longWordCutter30(letterList.content)}  
 									</button>
 								</td>
 								<td ><B>

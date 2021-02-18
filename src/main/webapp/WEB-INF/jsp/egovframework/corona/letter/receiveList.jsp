@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="asapro" uri="http://www.asadal.com" %>
 <%
  
     request.setCharacterEncoding("UTF-8");
@@ -286,7 +287,8 @@
                                             	
                                             	<th  width="60px" nowrap>번호</th>
                                             	<th style="text-align: center"  width="50px" nowrap> <i style="font-size:25px" class="far fa-envelope-open"></i></th>
-                                                <th>내용</th>
+                                                <th>내용
+                                                </th>
                                                 <th width="250px">보낸 사람</th>                                    
                                                 <th width="250px">보낸 날짜</th>
                                             
@@ -336,19 +338,7 @@
 									</c:otherwise>
 									</c:choose>
 									onclick="winOpen(this)" title="${lreceiver.content}" value="/receiveRead.do?lrno=${lreceiver.lrno}" name="letterRead" id="letterRead">
-									<c:choose>
-										<c:when test="${fn:length(lreceiver.content) >70 }">
-										
- 											<c:out value="${fn:substring(lreceiver.content,0,69)}" />....
- 										
-										</c:when>
-										<c:otherwise>
-											
- 											 <c:out value="${lreceiver.content}" />
- 											
-										
-										</c:otherwise>
-									</c:choose>
+								${asapro:longWordCutter30(lreceiver.content)}
 									</button>
 								</td>
 								<td ><B>

@@ -17,5 +17,19 @@ public class Functions {
 		
 		return birthFirst + maskStr;
 	}
+	
+	public static String longWordCutter30(String word){
+		if(StringUtils.isBlank(word)){
+			return word;
+		}
+		
+		if(word.length() > 30){
+			word = word.substring(0, 30);
+			word += "...";
+		}
+		return word;
+	}
+	
+	
 
 }
