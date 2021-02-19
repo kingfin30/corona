@@ -85,6 +85,8 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 ![image](https://user-images.githubusercontent.com/55385657/108462369-d999fe00-72bf-11eb-8ea5-d4b378364bbb.png)
 
 #### pw edit
+![image](https://user-images.githubusercontent.com/55385657/108462610-3bf2fe80-72c0-11eb-9592-dc4b4696d399.png)
+
 #### registration page
 #### my page
 #### message
