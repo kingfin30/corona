@@ -91,6 +91,8 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 ![image](https://user-images.githubusercontent.com/55385657/108462703-6b097000-72c0-11eb-9c30-7a10f3c0de6e.png)
 
 #### my page
+
+
 #### message
 
 ### subscribe list
