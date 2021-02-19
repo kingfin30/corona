@@ -75,6 +75,7 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 
 ### admin list
 #### list page
+![image](https://user-images.githubusercontent.com/55385657/108461292-c7b75b80-72bd-11eb-835c-ea8dbd7ec4ef.png)
 #### view page
 #### info edit
 #### pw edit
