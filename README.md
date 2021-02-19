@@ -74,11 +74,16 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 ![image](https://user-images.githubusercontent.com/55385657/106219712-5126c100-621d-11eb-9648-457e81234510.png)
 
 ### admin list
+
 #### list page
 ![image](https://user-images.githubusercontent.com/55385657/108461979-203b2880-72bf-11eb-9722-ad28f79237c4.png)
+
 #### view page
 ![image](https://user-images.githubusercontent.com/55385657/108462193-8aec6400-72bf-11eb-8e01-adb87b76fbd7.png)
+
 #### info edit
+![image](https://user-images.githubusercontent.com/55385657/108462369-d999fe00-72bf-11eb-8ea5-d4b378364bbb.png)
+
 #### pw edit
 #### registration page
 #### my page
