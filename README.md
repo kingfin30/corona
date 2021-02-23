@@ -105,4 +105,5 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 #### view page
 #### edit page
 #### registration page
-#### log
+#### log list
+#### log view
