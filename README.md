@@ -112,4 +112,6 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 ![image](https://user-images.githubusercontent.com/55385657/108807088-d3b95b00-75e6-11eb-8953-4eb504188acf.png)
 
 #### log list
+![image](https://user-images.githubusercontent.com/55385657/108807132-f186c000-75e6-11eb-9e9b-06ada20bb959.png)
+
 #### log view
