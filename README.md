@@ -109,5 +109,7 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 ![image](https://user-images.githubusercontent.com/55385657/108807023-a7054380-75e6-11eb-941c-58503683e574.png)
 
 #### registration page
+![image](https://user-images.githubusercontent.com/55385657/108807088-d3b95b00-75e6-11eb-8953-4eb504188acf.png)
+
 #### log list
 #### log view
