@@ -48,7 +48,7 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 
 ![image](https://user-images.githubusercontent.com/55385657/106218170-2d15b080-621a-11eb-8471-8093847ff3e8.png)
 
-+ Kakao API
++ Kakao Zip API
 
 ![image](https://user-images.githubusercontent.com/55385657/106218283-61896c80-621a-11eb-82dd-21d73df224cb.png)
 
