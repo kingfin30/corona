@@ -96,7 +96,7 @@ Then, You can apply for a subscription by entering your name, date of birth, and
 
 ### subscribe list
 #### list page
-#### registration page
+
 
 ### content List
 #### list page
